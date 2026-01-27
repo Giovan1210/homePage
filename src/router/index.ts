@@ -1,6 +1,10 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
 import HomeView from '@/pages/HomeView.vue'
 import AboutView from '@/pages/AboutView.vue'
+import WebsiteStatusView from '@/pages/WebsiteStatusView.vue'
+import Admin from '@/pages/admin/AdminLayout.vue'
+import GuestbookView from '@/pages/GuestbookView.vue'
+
 // import ArticlesView from '@/pages/ArticlesView.vue'
 // import PortfolioView from '@/pages/PortfolioView.vue'
 // import SitesView from '@/pages/SitesView.vue'
@@ -24,7 +28,30 @@ const routes: RouteRecordRaw[] = [
       title: '关于我'
     }
   },
-
+    {
+    path: '/sites',
+    name: 'sites',
+    component: WebsiteStatusView,
+    meta: {
+      title: '网站'
+    }
+  },
+    {
+    path: '/note',
+    name: 'note',
+    component: GuestbookView,
+    meta: {
+      title: '留言板'
+    }
+  },
+    {
+    path: '/admin',
+    name: 'admin',
+    component: Admin,
+    meta: {
+      title: '后台管理'
+    }
+  },
   // {
   //   path: '/sponsor',
   //   name: 'sponsor',
