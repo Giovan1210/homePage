@@ -1,5 +1,4 @@
 import { WidgetType } from "@/enums/avatar.ts";
-import type { AvatarOption } from "@/types";
 import { AVATAR_LAYER, NONE } from "@/utils/constant";
 import { widgetData } from "@/utils/dynamic-data";
 import { getRandomAvatarOption } from "@/utils";
@@ -70,7 +69,7 @@ export async function buildAvatarSvg(
       const content = svgRaw
         .slice(svgRaw.indexOf(">", svgRaw.indexOf("<svg")) + 1)
         .replace("</svg>", "")
-        .replaceAll("$fillColor", widgetFillColor || "transparent");
+        .replace(/\$fillColor/g, widgetFillColor || "transparent");
 
       return `
         <g id="vue-color-avatar-${sortedList[i][0]}">

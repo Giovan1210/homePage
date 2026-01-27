@@ -41,6 +41,5 @@ declare module 'vue' {
     SplitText: typeof import('./src/components/SplitText.vue')['default']
     TenYearPromise: typeof import('./src/components/ui/TenYearPromise.vue')['default']
     ThemeToggle: typeof import('./src/components/ui/ThemeToggle.vue')['default']
-    VueColorAvatar: typeof import('./src/components/VueColorAvatar.vue')['default']
   }
 }

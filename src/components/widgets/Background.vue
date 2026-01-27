@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { type AvatarOption } from '../../types'
+import { type AvatarOption } from '../../types/avatar.ts'
 
 interface BackgroundProps {
   color: AvatarOption['background']['color']

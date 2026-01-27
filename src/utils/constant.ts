@@ -1,4 +1,4 @@
-import type { AvatarOption, AvatarSettings } from '@/types'
+import type { AvatarOption, AvatarSettings } from '@/types/avatar.ts'
 
 import {
   BeardShape,
