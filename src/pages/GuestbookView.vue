@@ -372,13 +372,12 @@ const submitMessage = async () => {
   try {
     const websiteNormalized = normalizeWebsite(formData.value.website);
     const avatarSvg = await buildAvatarSvg();
-    const avatar = svgToDataUrl(avatarSvg) || undefined;
 
     await request.post("/messages", {
       name: formData.value.name,
       email: formData.value.email,
       website: websiteNormalized || undefined,
-      avatar,
+      avatar:avatarSvg,
       content: formData.value.message,
     });
 
