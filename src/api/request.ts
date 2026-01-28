@@ -4,11 +4,14 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from 'axios'
 
-const { VITE_API_BASE_URL } = import.meta.env
-// 默认 /api。若提供 VITE_API_BASE_URL 且未带 /api，自动补全，避免打到根路径导致 404
+const { VITE_API_BASE_URL, VITE_API_BASE_URL_LOCAL } = import.meta.env
+const RAW_BASE_URL = import.meta.env.DEV
+  ? (VITE_API_BASE_URL_LOCAL || VITE_API_BASE_URL)
+  : VITE_API_BASE_URL
+// 默认 /api。若提供 base url 且未带 /api，自动补全，避免打到根路径导致 404
 const BASE_URL = (() => {
-  if (!VITE_API_BASE_URL) return '/api'
-  const trimmed = VITE_API_BASE_URL.replace(/\/$/, '')
+  if (!RAW_BASE_URL) return '/api'
+  const trimmed = RAW_BASE_URL.replace(/\/$/, '')
   return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`
 })()
 

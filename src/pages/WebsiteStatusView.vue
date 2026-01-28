@@ -1,12 +1,20 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-blue-50 dark:from-gray-900 dark:via-blue-900 dark:to-blue-900 relative">
+  <div
+    class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-blue-50 dark:from-gray-900 dark:via-blue-900 dark:to-blue-900 relative"
+  >
     <!-- Background blur effects -->
     <div class="absolute inset-0 overflow-hidden">
-      <div class="absolute -top-40 -right-40 w-80 h-80 bg-blue-300/20 dark:bg-blue-500/10 rounded-full blur-3xl"></div>
-      <div class="hidden absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-3xl"></div>
-      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-300/10 dark:bg-pink-500/5 rounded-full blur-3xl"></div>
+      <div
+        class="absolute -top-40 -right-40 w-80 h-80 bg-blue-300/20 dark:bg-blue-500/10 rounded-full blur-3xl"
+      ></div>
+      <div
+        class="hidden absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-3xl"
+      ></div>
+      <div
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-300/10 dark:bg-pink-500/5 rounded-full blur-3xl"
+      ></div>
     </div>
-    
+
     <!-- Content overlay -->
     <div class="relative z-10">
       <div class="status-container">
@@ -14,19 +22,21 @@
           <!-- Header -->
           <div class="header">
             <h1 class="title">网站监控</h1>
-            <p class="subtitle">实时监控我的网站和项目状态，展示在线情况和响应速度 🌐。</p>
+            <p class="subtitle">
+              实时监控我的网站和项目状态，展示在线情况和响应速度 🌐。
+            </p>
           </div>
 
           <!-- Websites Status List -->
           <div class="status-section">
             <h2 class="section-title">在线状态</h2>
-            
+
             <div v-if="websites.length === 0" class="empty-state">
               <p>暂无网站监控记录</p>
             </div>
 
             <div v-else class="websites-grid">
-              <div 
+              <div
                 v-for="(website, index) in websites"
                 :key="index"
                 class="website-card"
@@ -42,7 +52,9 @@
                 <!-- Website Info -->
                 <div class="website-info">
                   <h3 class="website-name">{{ website.name }}</h3>
-                  <p v-if="website.description" class="website-description">{{ website.description }}</p>
+                  <p v-if="website.description" class="website-description">
+                    {{ website.description }}
+                  </p>
                   <a :href="website.url" target="_blank" class="website-url">
                     {{ website.url }}
                     <ExternalLink class="w-3 h-3" />
@@ -53,19 +65,28 @@
                 <div class="metrics">
                   <div class="metric">
                     <span class="metric-label">响应时间</span>
-                    <span class="metric-value" :class="getLatencyClass(website.latency)">
-                      {{ website.latency !== null ? website.latency + 'ms' : '检测中...' }}
+                    <span
+                      class="metric-value"
+                      :class="getLatencyClass(website.latency)"
+                    >
+                      {{
+                        website.latency !== null
+                          ? website.latency + "ms"
+                          : "检测中..."
+                      }}
                     </span>
                   </div>
 
                   <div class="metric">
                     <span class="metric-label">检查时间</span>
-                    <span class="metric-value">{{ formatCheckTime(website.lastCheck) }}</span>
+                    <span class="metric-value">{{
+                      formatCheckTime(website.lastCheck)
+                    }}</span>
                   </div>
 
                   <div class="metric">
                     <span class="metric-label">正常率</span>
-                    <span class="metric-value">{{ website.uptime }}%</span>
+                    <span class="metric-value">{{ formatUptime(website.uptime) }}%</span>
                   </div>
                 </div>
 
@@ -73,24 +94,48 @@
                 <div class="status-details">
                   <div v-if="website.statusCode" class="detail-item">
                     <span class="detail-label">HTTP 状态码：</span>
-                    <span class="detail-value" :class="getStatusCodeClass(website.statusCode)">
+                    <span
+                      class="detail-value"
+                      :class="getStatusCodeClass(website.statusCode)"
+                    >
                       {{ website.statusCode }}
                     </span>
                   </div>
                   <div v-if="website.message" class="detail-item">
                     <span class="detail-label">信息：</span>
-                    <span class="detail-value">{{ website.message }}</span>
+                    <span class="detail-value">{{ formatMessage(website.message) }}</span>
+                  </div>
+                  <div v-if="website.ssl" class="detail-item">
+                    <span class="detail-label">证书状态：</span>
+                    <span
+                      class="detail-value"
+                      :class="getCertStatusClass(website.ssl.status)"
+                    >
+                      {{ getCertStatusText(website.ssl.status) }}
+                    </span>
+                  </div>
+                  <div v-if="website.ssl?.validTo" class="detail-item">
+                    <span class="detail-label">证书到期：</span>
+                    <span class="detail-value">
+                      {{ formatDate(website.ssl.validTo) }}
+                      <span v-if="website.ssl?.daysRemaining !== null"
+                        >（剩余 {{ website.ssl.daysRemaining }} 天）</span
+                      >
+                    </span>
                   </div>
                 </div>
 
                 <!-- Check Button -->
-                <button 
+                <button
                   @click="checkWebsite(index)"
                   :disabled="website.checking"
                   class="check-button"
                 >
-                  <RotateCw class="w-4 h-4" :class="{ 'animate-spin': website.checking }" />
-                  {{ website.checking ? '检测中...' : '立即检测' }}
+                  <RotateCw
+                    class="w-4 h-4"
+                    :class="{ 'animate-spin': website.checking }"
+                  />
+                  {{ website.checking ? "检测中..." : "立即检测" }}
                 </button>
               </div>
             </div>
@@ -122,184 +167,219 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Plus, Trash2, ExternalLink, RotateCw } from 'lucide-vue-next'
+import { ref, computed, onMounted } from "vue";
+import { ExternalLink, RotateCw } from "lucide-vue-next";
+import request from "@/api/request";
 
 interface Website {
-  name: string
-  url: string
-  description?: string
-  status: 'online' | 'offline' | 'checking'
-  latency: number | null
-  statusCode: number | null
-  message: string
-  lastCheck: Date | null
-  uptime: number
-  checking: boolean
+  name: string;
+  url: string;
+  description?: string;
+  status: "online" | "offline" | "checking";
+  latency: number | null;
+  statusCode: number | null;
+  message: string;
+  lastCheck: Date | null;
+  uptime: number;
+  checking: boolean;
+  ssl?: {
+    status: "valid" | "expiring" | "expired" | "none" | "error";
+    validFrom?: string | null;
+    validTo?: string | null;
+    daysRemaining?: number | null;
+    issuer?: string | null;
+    subject?: string | null;
+    serialNumber?: string | null;
+    fingerprint?: string | null;
+    error?: string;
+  };
 }
 
 const newWebsite = ref({
-  name: '',
-  url: '',
-  description: ''
-})
+  name: "",
+  url: "",
+  description: "",
+});
 
 const websites = ref<Website[]>([
   {
-    name: '个人博客',
-    url: 'https://example.com',
-    description: '我的技术博客',
-    status: 'online',
-    latency: 145,
-    statusCode: 200,
-    message: '连接成功',
+    name: "个人主页",
+    url: "https://www.giovan.cn",
+    description: "我的个人主页",
+    status: "online",
+    latency: 0,
+    statusCode: 0,
+    message: null,
     lastCheck: new Date(Date.now() - 5 * 60 * 1000),
-    uptime: 99.8,
-    checking: false
+    uptime: 0,
+    checking: false,
+    ssl: {
+      status: "valid",
+      validTo: null,
+      daysRemaining: null,
+    },
   },
-  {
-    name: 'GitHub',
-    url: 'https://github.com',
-    description: '开源项目托管',
-    status: 'online',
-    latency: 234,
-    statusCode: 200,
-    message: '连接成功',
-    lastCheck: new Date(Date.now() - 10 * 60 * 1000),
-    uptime: 99.9,
-    checking: false
-  },
-  {
-    name: '项目网站',
-    url: 'https://project.example.com',
-    description: '我的产品',
-    status: 'offline',
-    latency: null,
-    statusCode: null,
-    message: '连接超时',
-    lastCheck: new Date(Date.now() - 2 * 60 * 1000),
-    uptime: 95.2,
-    checking: false
-  }
-])
+]);
 
-const onlineCount = computed(() => websites.value.filter(w => w.status === 'online').length)
-const offlineCount = computed(() => websites.value.filter(w => w.status === 'offline').length)
+const onlineCount = computed(
+  () => websites.value.filter((w) => w.status === "online").length,
+);
+const offlineCount = computed(
+  () => websites.value.filter((w) => w.status === "offline").length,
+);
 const averageLatency = computed(() => {
   const latencies = websites.value
-    .filter(w => w.latency !== null)
-    .map(w => w.latency as number)
-  
-  if (latencies.length === 0) return 0
-  return Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length)
-})
+    .filter((w) => w.latency !== null)
+    .map((w) => w.latency as number);
+
+  if (latencies.length === 0) return 0;
+  return Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length);
+});
 
 const addWebsite = () => {
   if (!newWebsite.value.name || !newWebsite.value.url) {
-    alert('请填写网站名称和URL')
-    return
+    alert("请填写网站名称和URL");
+    return;
   }
 
   websites.value.push({
     name: newWebsite.value.name,
     url: newWebsite.value.url,
     description: newWebsite.value.description || undefined,
-    status: 'checking',
+    status: "checking",
     latency: null,
     statusCode: null,
-    message: '初始化中...',
+    message: "初始化中...",
     lastCheck: null,
     uptime: 100,
-    checking: true
-  })
+    checking: true,
+  });
 
-  const index = websites.value.length - 1
-  
+  const index = websites.value.length - 1;
+
   // 模拟检测
   setTimeout(() => {
-    checkWebsite(index)
-  }, 500)
+    checkWebsite(index);
+  }, 500);
 
   newWebsite.value = {
-    name: '',
-    url: '',
-    description: ''
-  }
-}
+    name: "",
+    url: "",
+    description: "",
+  };
+};
 
 const checkWebsite = async (index: number) => {
-  const website = websites.value[index]
-  website.checking = true
+  const website = websites.value[index];
+  website.checking = true;
+  website.status = "checking";
 
   try {
-    // 模拟网络请求检测
-    const startTime = performance.now()
-    
-    // 使用 fetch 的 HEAD 请求来检测网站
-    const response = await fetch(website.url, {
-      method: 'HEAD',
-      mode: 'no-cors'
-    })
+    const res = await request.get("/monitor/check", {
+      params: { url: website.url },
+    });
 
-    const endTime = performance.now()
-    const latency = Math.round(endTime - startTime)
+    const data = res?.data || res;
 
-    website.status = 'online'
-    website.latency = latency
-    website.statusCode = response.status || 200
-    website.message = '连接成功'
-  } catch (error) {
-    website.status = 'offline'
-    website.latency = null
-    website.statusCode = null
-    website.message = '连接失败'
+    website.status = data.status === "online" ? "online" : "offline";
+    website.latency = typeof data.latency === "number" ? data.latency : null;
+    website.statusCode = data.statusCode ?? null;
+    website.message = data.message || "连接成功";
+    website.ssl = data.ssl || { status: "none" };
+    website.lastCheck = data.checkedAt ? new Date(data.checkedAt) : new Date();
+  } catch (error: any) {
+    website.status = "offline";
+    website.latency = null;
+    website.statusCode = null;
+    website.message = error?.message || "连接失败";
+    website.ssl = { status: "error", error: error?.message || "检测失败" };
+    website.lastCheck = new Date();
+  } finally {
+    website.checking = false;
+    website.uptime = Math.max(85, 100 - Math.random() * 15);
   }
+};
 
-  website.lastCheck = new Date()
-  website.checking = false
-  
-  // 模拟正常率更新
-  website.uptime = Math.max(85, 100 - Math.random() * 15)
-}
+onMounted(() => {
+  websites.value.forEach((_, index) => {
+    checkWebsite(index);
+  });
+});
 
 const getStatusText = (status: string) => {
   const statusMap: Record<string, string> = {
-    online: '在线',
-    offline: '离线',
-    checking: '检测中'
-  }
-  return statusMap[status] || status
-}
+    online: "在线",
+    offline: "离线",
+    checking: "检测中",
+  };
+  return statusMap[status] || status;
+};
 
 const getLatencyClass = (latency: number | null) => {
-  if (latency === null) return 'pending'
-  if (latency < 100) return 'fast'
-  if (latency < 300) return 'normal'
-  return 'slow'
-}
+  if (latency === null) return "pending";
+  if (latency < 100) return "fast";
+  if (latency < 300) return "normal";
+  return "slow";
+};
 
 const getStatusCodeClass = (code: number) => {
-  if (code >= 200 && code < 300) return 'success'
-  if (code >= 300 && code < 400) return 'redirect'
-  if (code >= 400 && code < 500) return 'error'
-  if (code >= 500) return 'server-error'
-  return 'unknown'
-}
+  if (code >= 200 && code < 300) return "success";
+  if (code >= 300 && code < 400) return "redirect";
+  if (code >= 400 && code < 500) return "error";
+  if (code >= 500) return "server-error";
+  return "unknown";
+};
+
+const getCertStatusText = (status: string) => {
+  const map: Record<string, string> = {
+    valid: "有效",
+    expiring: "即将到期",
+    expired: "已过期",
+    none: "无证书",
+    error: "检测失败",
+  };
+  return map[status] || status;
+};
+
+const getCertStatusClass = (status: string) => {
+  if (status === "valid") return "success";
+  if (status === "expiring") return "redirect";
+  if (status === "expired") return "error";
+  if (status === "error") return "server-error";
+  return "unknown";
+};
+
+const formatDate = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString();
+};
+
+const formatUptime = (value: number) => {
+  if (Number.isNaN(value)) return "0.0";
+  return value.toFixed(1);
+};
+
+const formatMessage = (value: string) => {
+  if (!value) return "-";
+  if (value.length <= 32) return value;
+  return `${value.slice(0, 28)}...`;
+};
 
 const formatCheckTime = (date: Date | null) => {
-  if (!date) return '未检测'
-  
-  const now = new Date()
-  const diff = now.getTime() - date.getTime()
-  const minutes = Math.floor(diff / (60 * 1000))
-  const hours = Math.floor(diff / (60 * 60 * 1000))
-  const days = Math.floor(diff / (24 * 60 * 60 * 1000))
+  if (!date) return "未检测";
 
-  if (minutes < 1) return '刚刚'
-  if (minutes < 60) return `${minutes}分钟前`
-  if (hours < 24) return `${hours}小时前`
-  return `${days}天前`
-}
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const minutes = Math.floor(diff / (60 * 1000));
+  const hours = Math.floor(diff / (60 * 60 * 1000));
+  const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+
+  if (minutes < 1) return "刚刚";
+  if (minutes < 60) return `${minutes}分钟前`;
+  if (hours < 24) return `${hours}小时前`;
+  return `${days}天前`;
+};
 </script>
 
 <style scoped>
