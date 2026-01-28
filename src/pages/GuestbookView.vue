@@ -94,7 +94,14 @@
           <div class="messages-section">
             <h2 class="section-title">留言列表</h2>
 
-            <div v-if="messages.length === 0" class="empty-state">
+            <!-- 优先显示 loading -->
+            <div v-if="isLoading" class="loading-state">
+              <div class="spinner"></div>
+              <p>加载中...</p>
+            </div>
+
+            <!-- 仅在非 loading 且无留言时显示空状态 -->
+            <div v-else-if="messages.length === 0" class="empty-state">
               <p>还没有留言，成为第一个留言的人吧！</p>
             </div>
 

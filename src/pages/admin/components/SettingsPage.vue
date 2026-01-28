@@ -6,9 +6,6 @@
     </div>
 
     <el-card shadow="hover">
-      <template #header>
-        <span>网站与个人信息</span>
-      </template>
 
       <el-form label-width="120px">
         <el-tabs v-model="activeTab" class="settings-tabs">

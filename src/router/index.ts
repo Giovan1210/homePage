@@ -87,6 +87,7 @@ router.beforeEach((to, _from, next) => {
 
 router.afterEach((to) => {
   if (to.path.startsWith('/admin')) return
+  if (import.meta.env.DEV) return
   const key = `access-log:${to.path}`
   if (sessionStorage.getItem(key)) return
   sessionStorage.setItem(key, '1')

@@ -1,49 +1,65 @@
 <template>
   <el-container class="admin-container">
-    <el-aside
-      class="admin-sidebar hidden-sm-and-down"
-      :width="sidebarCollapsed ? '64px' : '240px'"
-    >
-      <el-scrollbar class="sidebar-scroll">
-        <el-menu
-          class="admin-menu"
-          :default-active="activeMenu"
-          :collapse="sidebarCollapsed"
-          @select="activeMenu = $event"
+    <el-header class="admin-header">
+      <div class="header-left">
+        <el-button
+          class="mobile-menu-btn hidden-md-and-up"
+          type="primary"
+          plain
+          @click="mobileMenuOpen = true"
         >
-          <el-menu-item
-            v-for="item in menuItems"
-            :key="item.id"
-            :index="item.id"
-          >
-            <component :is="item.icon" class="nav-icon" />
-            <span class="nav-label">{{ item.label }}</span>
-          </el-menu-item>
-        </el-menu>
-      </el-scrollbar>
-    </el-aside>
-
-    <el-main class="admin-main">
-      <div class="admin-header">
-        <div class="header-left">
-          <el-button class="mobile-menu-btn hidden-md-and-up" type="primary" plain @click="mobileMenuOpen = true">
-            菜单
-          </el-button>
-          <div>
-            <div class="header-title">管理后台</div>
-            <div class="header-subtitle">欢迎回来，{{ authStore.user?.username || 'admin' }}</div>
+          菜单
+        </el-button>
+        <div>
+          <div class="header-title">管理后台</div>
+          <div class="header-subtitle">
+            欢迎回来，{{ authStore.user?.username || "admin" }}
           </div>
         </div>
-        <div class="header-actions">
-          <el-button type="danger" plain size="small" @click="handleLogout">退出登录</el-button>
+      </div>
+      <div class="header-actions">
+        <el-button type="danger" plain size="small" @click="handleLogout"
+          >退出登录</el-button
+        >
+      </div>
+    </el-header>
+
+    <el-container class="admin-body">
+      <el-aside
+        class="admin-sidebar hidden-sm-and-down"
+        :width="sidebarCollapsed ? '64px' : '240px'"
+      >
+        <el-scrollbar class="sidebar-scroll">
+          <el-menu
+            class="admin-menu"
+            :default-active="activeMenu"
+            :collapse="sidebarCollapsed"
+            @select="activeMenu = $event"
+          >
+            <el-menu-item
+              v-for="item in menuItems"
+              :key="item.id"
+              :index="item.id"
+            >
+              <component :is="item.icon" class="nav-icon mr-10px" />
+              <span class="nav-label">{{ item.label }}</span>
+            </el-menu-item>
+          </el-menu>
+        </el-scrollbar>
+      </el-aside>
+
+      <el-main class="admin-main">
+        <div class="content-wrapper">
+          <KeepAlive>
+            <component :is="currentComponent" />
+          </KeepAlive>
         </div>
-      </div>
-      <div class="content-wrapper">
-        <KeepAlive>
-          <component :is="currentComponent" />
-        </KeepAlive>
-      </div>
-    </el-main>
+      </el-main>
+    </el-container>
+
+    <el-footer class="admin-footer">
+      <span>© 2026 管理后台</span>
+    </el-footer>
 
     <el-drawer
       v-model="mobileMenuOpen"
@@ -57,12 +73,8 @@
         :default-active="activeMenu"
         @select="handleMobileSelect"
       >
-        <el-menu-item
-          v-for="item in menuItems"
-          :key="item.id"
-          :index="item.id"
-        >
-          <component :is="item.icon" class="nav-icon" />
+        <el-menu-item v-for="item in menuItems" :key="item.id" :index="item.id">
+          <component :is="item.icon" class="nav-icon " />
           <span class="nav-label">{{ item.label }}</span>
         </el-menu-item>
       </el-menu>
@@ -125,15 +137,20 @@ const handleMobileSelect = (value: string) => {
 
 const handleLogout = () => {
   authStore.logout();
-  router.replace('/admin/login');
+  router.replace("/admin/login");
 };
 </script>
 
 <style scoped lang="scss">
 .admin-container {
-  height:calc(100vh - 65px);
+  height: 100vh;
   background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
   transition: background 0.3s ease;
+}
+
+.admin-body {
+  flex: 1;
+  min-height: 0;
 }
 
 .admin-sidebar {
@@ -161,11 +178,13 @@ const handleLogout = () => {
 .nav-label {
   font-size: 14px;
   font-weight: 500;
+  display: inline-block;
+  padding-left: 10px;
 }
 
 .admin-main {
   flex: 1;
-  padding: 24px;
+  padding: 12px 16px 16px;
   overflow-y: auto;
   background: transparent;
   min-height: 0;
@@ -177,12 +196,12 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
-  padding: 16px 18px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  backdrop-filter: blur(12px);
+  height: 64px;
+  padding: 0 24px;
+  border-radius: 0;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
 }
 
 .header-left {
@@ -215,7 +234,7 @@ const handleLogout = () => {
 }
 
 .content-wrapper {
-  max-width: 1400px;
+  max-width: 100%;
   margin: 0 auto;
   flex: 1;
   width: 100%;
@@ -224,6 +243,18 @@ const handleLogout = () => {
   flex-direction: column;
 }
 
+.admin-footer {
+  text-align: center;
+  color: #6b7280;
+  font-size: 12px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 
 :deep(.el-card) {
@@ -253,21 +284,6 @@ const handleLogout = () => {
   background-color: rgba(59, 130, 246, 0.1) !important;
 }
 
-:deep(.el-button.is-link) {
-  color: #3b82f6;
-}
-
-:deep(.el-button.is-link):hover {
-  color: #2563eb;
-}
-
-:deep(.el-button.is-link.is-danger) {
-  color: #ef4444;
-}
-
-:deep(.el-button.is-link.is-danger):hover {
-  color: #dc2626;
-}
 
 :deep(.el-input .el-input__wrapper) {
   background: rgba(255, 255, 255, 0.8);

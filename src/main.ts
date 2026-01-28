@@ -26,14 +26,12 @@ if (VITE_SITE_TITLE) {
   document.title = VITE_SITE_TITLE
 }
 
-// 处理404页面重定向
+// 处理404页面重定向，并在路由就绪后再挂载应用，避免刷新闪烁
 router.isReady().then(() => {
   const redirectPath = sessionStorage.getItem('redirectPath')
   if (redirectPath) {
     sessionStorage.removeItem('redirectPath')
     router.push(redirectPath)
   }
+  app.mount('#app')
 })
-
-// 挂载应用
-app.mount('#app')

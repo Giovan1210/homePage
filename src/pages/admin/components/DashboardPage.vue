@@ -62,10 +62,16 @@
       </template>
 
       <el-table :data="recentActivity" stripe>
-        <el-table-column prop="title" label="标题" width="200"></el-table-column>
+        <el-table-column
+          prop="title"
+          label="标题"
+          width="200"
+        ></el-table-column>
         <el-table-column prop="type" label="类型" width="100">
           <template #default="scope">
-            <el-tag :type="getTagType(scope.row.type)">{{ scope.row.type }}</el-tag>
+            <el-tag :type="getTagType(scope.row.type)">{{
+              scope.row.type
+            }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="date" label="时间" width="180"></el-table-column>
@@ -80,29 +86,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Eye, Users, MessageSquare, Briefcase, Clock } from 'lucide-vue-next'
+import { ref } from "vue";
+import { Eye, Users, MessageSquare, Briefcase, Clock } from "lucide-vue-next";
 
 const recentActivity = ref([
-  { title: '新用户注册', type: '用户', date: '2026-01-26 10:30' },
-  { title: '新留言', type: '留言', date: '2026-01-26 09:45' },
-  { title: '项目更新', type: '项目', date: '2026-01-26 08:20' },
-  { title: '系统维护', type: '系统', date: '2026-01-25 20:00' }
-])
+  { title: "新用户注册", type: "用户", date: "2026-01-26 10:30" },
+  { title: "新留言", type: "留言", date: "2026-01-26 09:45" },
+  { title: "项目更新", type: "项目", date: "2026-01-26 08:20" },
+  { title: "系统维护", type: "系统", date: "2026-01-25 20:00" },
+]);
 
 const getTagType = (type: string) => {
   const typeMap: Record<string, string> = {
-    '用户': 'success',
-    '留言': 'info',
-    '项目': 'warning',
-    '系统': 'danger'
-  }
-  return typeMap[type] || 'info'
-}
+    用户: "success",
+    留言: "info",
+    项目: "warning",
+    系统: "danger",
+  };
+  return typeMap[type] || "info";
+};
 </script>
 
 <style scoped lang="scss">
-
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -149,5 +154,4 @@ const getTagType = (type: string) => {
   font-weight: 600;
   color: #1f2937;
 }
-
 </style>

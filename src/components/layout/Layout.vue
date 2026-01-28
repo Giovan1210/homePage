@@ -8,7 +8,7 @@
       <div class="absolute bottom-0 left-1/3 w-72 h-72 bg-gray-300/20 dark:bg-gray-800/10 rounded-full blur-3xl"></div>
     </div>
     
-    <Header />
+    <Header v-if="showLayoutChrome" />
 
     <!-- 全局鼠标光晕（与 /portfolio 卡片风格协调） -->
     <div
@@ -35,7 +35,7 @@
       ></div>
     </div>
     
-    <main class="flex-1 relative z-10 pt-16">
+    <main :class="['flex-1', 'relative', 'z-10', showLayoutChrome?'pt-16':'']">
     <Transition 
       :name="transitionName" 
       mode="out-in"
@@ -47,12 +47,11 @@
     </Transition>
     </main>
     
-    <Footer />
+    <Footer v-if="showLayoutChrome" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from './Header.vue'
 import Footer from './Footer.vue'
@@ -60,6 +59,7 @@ import Footer from './Footer.vue'
 const route = useRoute()
 const transitionName = ref('page')
 const prevRoute = ref('')
+const showLayoutChrome = computed(() => !route.path.startsWith('/admin'))
 
 // 路由顺序映射，用于判断前进还是后退
 const routeOrder = {

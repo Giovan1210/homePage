@@ -14,7 +14,18 @@
       </div>
 
       <el-card class="login-card" shadow="hover">
-        <div class="login-title">后台登录</div>
+        <div class="login-card-header">
+          <div class="login-title">后台登录</div>
+          <el-button
+            class="back-home-btn"
+            type="primary"
+            link
+            @click="handleBackHome"
+          >
+            <ArrowLeft class="back-home-icon" />
+            返回首页
+          </el-button>
+        </div>
         <p class="login-desc">请输入管理员账号密码进入后台。</p>
         <el-form :model="form" :rules="rules" ref="formRef">
           <el-form-item label="账号" prop="username">
@@ -54,6 +65,7 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
+import { ArrowLeft } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
@@ -89,11 +101,15 @@ const handleLogin = async () => {
     }
   })
 }
+
+const handleBackHome = () => {
+  router.push('/')
+}
 </script>
 
 <style scoped lang="scss">
 .login-wrapper {
-  min-height: calc(100vh - 65px);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,11 +202,18 @@ const handleLogin = async () => {
   color: #e2e8f0;
 }
 
+.login-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
 .login-title {
   font-size: 20px;
   font-weight: 700;
   color: #1f2937;
-  margin-bottom: 8px;
 }
 
 .dark .login-title {
@@ -209,6 +232,18 @@ const handleLogin = async () => {
 
 .login-btn {
   width: 100%;
+}
+
+.back-home-btn {
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.back-home-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .login-tip {
